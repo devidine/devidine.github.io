@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JES Engine - 혁신적인 게임 개발 환경</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        :root { --bg-color: #000000; --bg-gradient: radial-gradient(circle at center, #1a1a33 0%, #000000 60%); --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #a78bfa; --accent-glow: rgba(167, 139, 250, 0.4); --card-bg: rgba(255, 255, 255, 0.03); --card-border: rgba(255, 255, 255, 0.08); --ease: cubic-bezier(0.23, 1, 0.32, 1); }
+        html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard', sans-serif; }
+        body { background-color: var(--bg-color); background-image: var(--bg-gradient); color: var(--text-primary); cursor: none; line-height: 1.7; overflow-x: hidden; letter-spacing: -0.01em; }
+        
+        #cursor { width: 64px; height: 64px; background-image: url('pointer.png'); background-size: contain; background-position: center; background-repeat: no-repeat; position: fixed; pointer-events: none; z-index: 10000; transform-origin: top left; opacity: 0; transition: opacity 0.3s ease, transform 0.1s; }
+        #cursor-glow { width: 400px; height: 400px; background: radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: screen; filter: blur(25px); opacity: 0; transition: opacity 0.3s ease, transform 0.2s ease; }
+        body:hover #cursor, body:hover #cursor-glow { opacity: 1; }
+        
+        a, button, .card { cursor: none; }
+        a:active, button:active { transform: scale(0.95); }
+
+        header { position: fixed; top: 0; width: 100%; padding: 25px 80px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); z-index: 1000; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .logo-container { display: flex; align-items: center; position: relative; }
+        .logo-container::after { content: ''; position: absolute; top: 50%; left: 50%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, rgba(167, 139, 250, 0) 70%); transform: translate(-50%, -50%); filter: blur(20px); z-index: -1; }
+        .logo-container img { height: 140px; width: auto; display: block; }
+
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { font-size: 1.1rem; font-weight: 500; color: var(--text-secondary); transition: color 0.3s var(--ease), transform 0.3s var(--ease); position: relative; text-decoration: none; display: inline-block; }
+        .nav-links a:hover { color: var(--text-primary); transform: translateY(-2px); }
+        .nav-links a.active { color: var(--text-primary); }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--accent); transition: width 0.3s var(--ease); }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+
+        footer { background-color: #ffffff; color: #000000; padding: 100px 80px; text-align: center; margin-top: 120px; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+        .footer-logo img { height: 100px; width: auto; }
+        .footer-text { color: #52525b; font-size: 0.95rem; }
+
+        .page-header { padding-top: 250px; padding-bottom: 80px; text-align: center; }
+        .page-header h1 { font-size: 5.5rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.06em; margin-bottom: 20px; }
+        .tag { display: inline-block; padding: 8px 18px; background: rgba(167, 139, 250, 0.15); color: var(--accent); border-radius: 30px; font-size: 0.95rem; font-weight: 600; margin-bottom: 25px; border: 1px solid rgba(167, 139, 250, 0.25); }
+
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 0 50px; }
+        .description-section { text-align: center; margin-bottom: 50px; }
+        .description-section p { font-size: 1.3rem; color: var(--text-secondary); line-height: 1.8; max-width: 900px; margin: 0 auto 30px; }
+
+        /* --- 추가된 시험해보기 버튼 스타일 --- */
+        .cta-container { text-align: center; margin-bottom: 100px; }
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 18px 45px;
+            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+            box-shadow: 0 10px 25px rgba(167, 139, 250, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .primary-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(167, 139, 250, 0.5);
+            color: #ffffff;
+        }
+
+        .image-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 100px; }
+        .image-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; overflow: hidden; transition: border-color 0.3s; }
+        .image-card:hover { border-color: rgba(167, 139, 250, 0.5); }
+        .image-card img { width: 100%; height: auto; display: block; }
+        .image-caption { padding: 25px; color: var(--text-secondary); font-size: 1rem; border-top: 1px solid var(--card-border); }
+        
+        .back-link { display: inline-block; margin-top: 50px; font-size: 1.1rem; color: var(--accent); font-weight: 600; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="cursor-glow"></div>
+
+    <header>
+        <div class="logo-container">
+            <a href="index.html"><img src="logo_white.png" alt="Company Logo White"></a>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#" class="active">JES Engine</a>
+            <a href="TimeFlow.html">Time Flow</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <div class="page-header">
+        <div class="tag">Next-Gen Game Engine</div>
+        <h1>JES Engine</h1>
+    </div>
+
+    <main class="main-content">
+        <section class="description-section">
+            <p>JES 엔진은 현대 게임 개발자들이 겪는 복잡성과 성능 타협의 문제를 해결하기 위해 바닥부터 새롭게 설계되었습니다. 우리는 '속도'와 '직관성'이라는 두 마리 토끼를 모두 잡았습니다.</p>
+            <p>초고속 자체 렌더링 파이프라인을 통해 하이엔드 그래픽을 부드럽게 구현하며, 노드 기반의 직관적인 스크립팅 시스템은 코딩 스트레스를 최소화합니다. JES와 함께라면 상상하는 모든 것이 현실이 됩니다.</p>
+        </section>
+
+        <div class="cta-container">
+            <a href="https://github.com/" target="_blank" class="primary-btn">
+                시험해보기 →
+            </a>
+        </div>
+
+        <section class="image-gallery">
+            <div class="image-card">
+                <img src="jes_screen1.png" alt="JES Engine Editor Screenshot 1">
+                <div class="image-caption">직관적인 노드 기반 스크립팅 인터페이스. 복잡한 로직도 시각적으로 쉽게 구현하세요.</div>
+            </div>
+            <div class="image-card">
+                <img src="jes_screen2.png" alt="JES Engine Rendering Sample">
+                <div class="image-caption">실시간 글로벌 일루미네이션이 적용된 압도적인 렌더링 퍼포먼스 예시.</div>
+            </div>
+        </section>
+        
+        <div style="text-align: center;">
+            <a href="index.html" class="back-link">← 메인으로 돌아가기</a>
+        </div>
+    </main>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="logo_black.png" alt="Company Logo Black">
+            </div>
+            <p class="footer-text">Got a dream you want to bring to life? Get in touch with us. <br> 현실로 이루고 싶은 꿈이 있나요? 저희에게 연락해 주세요.</p>
+            <p class="footer-text">instagram : @jaemin.o_o </p>
+            <p class="footer-text">© 2026 Devid. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const cursor = document.getElementById('cursor'); const glow = document.getElementById('cursor-glow');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, cursorX = mouseX, cursorY = mouseY, glowX = mouseX, glowY = mouseY;
+        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+        document.addEventListener('mousedown', () => { cursor.style.transform = 'scale(0.8)'; glow.style.transform = 'translate(-50%, -50%) scale(0.8)'; });
+        document.addEventListener('mouseup', () => { cursor.style.transform = 'scale(1)'; glow.style.transform = 'translate(-50%, -50%) scale(1)'; });
+        function animate() { cursorX += (mouseX - cursorX) * 0.6; cursorY += (mouseY - cursorY) * 0.6; glowX += (mouseX - glowX) * 0.15; glowY += (mouseY - glowY) * 0.15; cursor.style.left = cursorX + 'px'; cursor.style.top = cursorY + 'px'; glow.style.left = glowX + 'px'; glow.style.top = glowY + 'px'; requestAnimationFrame(animate); }
+        animate();
+        const links = document.querySelectorAll('a, button, .image-card');
+        links.forEach(link => { link.addEventListener('mouseenter', () => { glow.style.transform = 'translate(-50%, -50%) scale(1.6)'; glow.style.background = 'radial-gradient(circle, rgba(167, 139, 250, 0.7) 0%, rgba(167, 139, 250, 0) 70%)'; }); link.addEventListener('mouseleave', () => { glow.style.transform = 'translate(-50%, -50%) scale(1)'; glow.style.background = 'radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%)'; }); });
+    </script>
+</body>
+</html>
