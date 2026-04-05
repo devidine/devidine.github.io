@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Devid - 새로운 혁신</title>
+    <title>Devid</title>
+<link rel="icon" href="icon.png" type="image/png">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         :root {
@@ -31,33 +32,17 @@
             letter-spacing: -0.01em;
         }
 
+        /* --- 커스텀 마우스 포인터 --- */
         #cursor {
-            width: 64px;
-            height: 64px;
-            background-image: url('pointer.png');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: fixed;
-            pointer-events: none;
-            z-index: 10000;
-            transform-origin: top left;
-            opacity: 0; 
+            width: 64px; height: 64px;
+            background-image: url('pointer.png'); background-size: contain; background-position: center; background-repeat: no-repeat;
+            position: fixed; pointer-events: none; z-index: 10000; transform-origin: top left; opacity: 0; 
             transition: opacity 0.3s ease, transform 0.1s; 
         }
 
         #cursor-glow {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            mix-blend-mode: screen;
-            filter: blur(25px);
-            opacity: 0; 
+            width: 400px; height: 400px; background: radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: screen; filter: blur(25px); opacity: 0; 
             transition: opacity 0.3s ease, transform 0.2s ease;
         }
 
@@ -66,6 +51,7 @@
         a:active, button:active { transform: scale(0.95); }
         .card:active { transform: translateY(-10px) scale(0.98); }
 
+        /* --- PC 레이아웃 --- */
         header {
             position: fixed; top: 0; width: 100%; padding: 25px 80px; display: flex; justify-content: space-between; align-items: center;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);
@@ -107,6 +93,39 @@
         .footer-content { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 30px; }
         .footer-logo img { height: 100px; width: auto; }
         .footer-text { color: #52525b; font-size: 0.95rem; }
+
+        /* =========================================
+           📱 모바일 반응형 처리 (화면 768px 이하일 때)
+           ========================================= */
+        @media (max-width: 768px) {
+            /* 1. 모바일에서는 커스텀 포인터를 강제로 숨기고 기본 터치 방식으로 변경 */
+            #cursor, #cursor-glow { display: none !important; }
+            body { cursor: auto !important; }
+            a, button, .card { cursor: pointer !important; }
+
+            /* 2. 헤더(메뉴) 압축 및 로고 축소 */
+            header { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            .logo-container img { height: 60px; } /* 로고 대폭 축소 */
+            .logo-container::after { width: 80px; height: 80px; }
+            .nav-links { gap: 20px; }
+            .nav-links a { font-size: 0.95rem; }
+
+            /* 3. 메인 타이틀 크기 조절 */
+            .hero { padding: 0 20px; }
+            .hero h1 { font-size: 3rem; margin-top: 80px; } /* 글씨 크기 줄임 */
+            .hero p { font-size: 1.1rem; }
+
+            /* 4. 카드를 세로 1줄로 배치하고 여백 축소 */
+            .projects { grid-template-columns: 1fr; padding: 60px 20px; gap: 30px; }
+            .card { padding: 40px 30px; border-radius: 24px; }
+            .card h2 { font-size: 2.2rem; }
+            .card p { font-size: 1rem; margin-bottom: 30px; }
+
+            /* 5. 푸터 여백 및 로고 크기 축소 */
+            footer { padding: 60px 20px; margin-top: 40px; }
+            .footer-logo img { height: 60px; }
+            .footer-text { font-size: 0.85rem; line-height: 1.5; }
+        }
     </style>
 </head>
 <body>
@@ -165,67 +184,72 @@
         const cursor = document.getElementById('cursor');
         const glow = document.getElementById('cursor-glow');
 
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        let cursorX = mouseX;
-        let cursorY = mouseY;
-        let glowX = mouseX;
-        let glowY = mouseY;
+        // 접속한 기기가 마우스가 있는 기기인지 확인 (모바일/터치 기기 필터링)
+        const isHoverableDevice = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+        // 마우스가 있는 기기(PC 등)에서만 자바스크립트 애니메이션 실행!
+        if (isHoverableDevice) {
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let cursorX = mouseX;
+            let cursorY = mouseY;
+            let glowX = mouseX;
+            let glowY = mouseY;
 
-        // 클릭할 때 포인터 스케일 줄이기 효과 (포인터는 translate 제거)
-        document.addEventListener('mousedown', () => {
-            cursor.style.transform = 'scale(0.8)';
-            glow.style.transform = 'translate(-50%, -50%) scale(0.8)';
-        });
-        document.addEventListener('mouseup', () => {
-            cursor.style.transform = 'scale(1)';
-            glow.style.transform = 'translate(-50%, -50%) scale(1)';
-        });
-
-        function animate() {
-            cursorX += (mouseX - cursorX) * 0.6;
-            cursorY += (mouseY - cursorY) * 0.6;
-            
-            glowX += (mouseX - glowX) * 0.15;
-            glowY += (mouseY - glowY) * 0.15;
-
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            glow.style.left = glowX + 'px';
-            glow.style.top = glowY + 'px';
-
-            requestAnimationFrame(animate);
-        }
-        
-        animate();
-
-        const links = document.querySelectorAll('a, button, .card');
-        links.forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                glow.style.transform = 'translate(-50%, -50%) scale(1.6)';
-                glow.style.background = 'radial-gradient(circle, rgba(167, 139, 250, 0.7) 0%, rgba(167, 139, 250, 0) 70%)';
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
             });
-            link.addEventListener('mouseleave', () => {
+
+            document.addEventListener('mousedown', () => {
+                cursor.style.transform = 'scale(0.8)';
+                glow.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            });
+            document.addEventListener('mouseup', () => {
+                cursor.style.transform = 'scale(1)';
                 glow.style.transform = 'translate(-50%, -50%) scale(1)';
-                glow.style.background = 'radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%)';
             });
-        });
 
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / card.clientWidth) * 100;
-                const y = ((e.clientY - rect.top) / card.clientHeight) * 100;
-                card.style.setProperty('--mouse-x', `${x}%`);
-                card.style.setProperty('--mouse-y', `${y}%`);
+            function animate() {
+                cursorX += (mouseX - cursorX) * 0.6;
+                cursorY += (mouseY - cursorY) * 0.6;
+                
+                glowX += (mouseX - glowX) * 0.15;
+                glowY += (mouseY - glowY) * 0.15;
+
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                glow.style.left = glowX + 'px';
+                glow.style.top = glowY + 'px';
+
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+
+            const links = document.querySelectorAll('a, button, .card');
+            links.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    glow.style.transform = 'translate(-50%, -50%) scale(1.6)';
+                    glow.style.background = 'radial-gradient(circle, rgba(167, 139, 250, 0.7) 0%, rgba(167, 139, 250, 0) 70%)';
+                });
+                link.addEventListener('mouseleave', () => {
+                    glow.style.transform = 'translate(-50%, -50%) scale(1)';
+                    glow.style.background = 'radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%)';
+                });
             });
-        });
+
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / card.clientWidth) * 100;
+                    const y = ((e.clientY - rect.top) / card.clientHeight) * 100;
+                    card.style.setProperty('--mouse-x', `${x}%`);
+                    card.style.setProperty('--mouse-y', `${y}%`);
+                });
+            });
+        }
     </script>
 </body>
 </html>

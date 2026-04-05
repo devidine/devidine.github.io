@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JES Engine - 혁신적인 게임 개발 환경</title>
+<link rel="icon" href="icon.png" type="image/png">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <style>
         :root { --bg-color: #000000; --bg-gradient: radial-gradient(circle at center, #1a1a33 0%, #000000 60%); --text-primary: #ffffff; --text-secondary: #a1a1aa; --accent: #a78bfa; --accent-glow: rgba(167, 139, 250, 0.4); --card-bg: rgba(255, 255, 255, 0.03); --card-border: rgba(255, 255, 255, 0.08); --ease: cubic-bezier(0.23, 1, 0.32, 1); }
@@ -43,7 +44,6 @@
         .description-section { text-align: center; margin-bottom: 50px; }
         .description-section p { font-size: 1.3rem; color: var(--text-secondary); line-height: 1.8; max-width: 900px; margin: 0 auto 30px; }
 
-        /* --- 추가된 시험해보기 버튼 스타일 --- */
         .cta-container { text-align: center; margin-bottom: 100px; }
         .primary-btn {
             display: inline-flex;
@@ -75,6 +75,36 @@
         
         .back-link { display: inline-block; margin-top: 50px; font-size: 1.1rem; color: var(--accent); font-weight: 600; text-decoration: none; }
         .back-link:hover { text-decoration: underline; }
+
+        /* =========================================
+           📱 모바일 반응형 처리 (화면 768px 이하일 때)
+           ========================================= */
+        @media (max-width: 768px) {
+            #cursor, #cursor-glow { display: none !important; }
+            body { cursor: auto !important; }
+            a, button, .card, .primary-btn { cursor: pointer !important; }
+
+            header { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            .logo-container img { height: 60px; }
+            .logo-container::after { width: 80px; height: 80px; }
+            .nav-links { gap: 15px; flex-wrap: wrap; justify-content: center; }
+            .nav-links a { font-size: 0.95rem; }
+
+            .page-header { padding-top: 150px; padding-bottom: 50px; }
+            .page-header h1 { font-size: 3rem; }
+            
+            .main-content { padding: 0 20px; }
+            .description-section p { font-size: 1.1rem; }
+
+            .cta-container { margin-bottom: 60px; }
+            .primary-btn { padding: 15px 30px; font-size: 1.1rem; }
+            
+            .image-gallery { grid-template-columns: 1fr; gap: 30px; margin-bottom: 60px; }
+            
+            footer { padding: 60px 20px; margin-top: 40px; }
+            .footer-logo img { height: 60px; }
+            .footer-text { font-size: 0.85rem; line-height: 1.5; }
+        }
     </style>
 </head>
 <body>
@@ -140,14 +170,31 @@
 
     <script>
         const cursor = document.getElementById('cursor'); const glow = document.getElementById('cursor-glow');
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, cursorX = mouseX, cursorY = mouseY, glowX = mouseX, glowY = mouseY;
-        document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-        document.addEventListener('mousedown', () => { cursor.style.transform = 'scale(0.8)'; glow.style.transform = 'translate(-50%, -50%) scale(0.8)'; });
-        document.addEventListener('mouseup', () => { cursor.style.transform = 'scale(1)'; glow.style.transform = 'translate(-50%, -50%) scale(1)'; });
-        function animate() { cursorX += (mouseX - cursorX) * 0.6; cursorY += (mouseY - cursorY) * 0.6; glowX += (mouseX - glowX) * 0.15; glowY += (mouseY - glowY) * 0.15; cursor.style.left = cursorX + 'px'; cursor.style.top = cursorY + 'px'; glow.style.left = glowX + 'px'; glow.style.top = glowY + 'px'; requestAnimationFrame(animate); }
-        animate();
-        const links = document.querySelectorAll('a, button, .image-card');
-        links.forEach(link => { link.addEventListener('mouseenter', () => { glow.style.transform = 'translate(-50%, -50%) scale(1.6)'; glow.style.background = 'radial-gradient(circle, rgba(167, 139, 250, 0.7) 0%, rgba(167, 139, 250, 0) 70%)'; }); link.addEventListener('mouseleave', () => { glow.style.transform = 'translate(-50%, -50%) scale(1)'; glow.style.background = 'radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%)'; }); });
+        
+        // 접속한 기기가 마우스가 있는 기기인지 확인 (모바일/터치 기기 필터링)
+        const isHoverableDevice = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+        if (isHoverableDevice) {
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2, cursorX = mouseX, cursorY = mouseY, glowX = mouseX, glowY = mouseY;
+            document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+            document.addEventListener('mousedown', () => { cursor.style.transform = 'scale(0.8)'; glow.style.transform = 'translate(-50%, -50%) scale(0.8)'; });
+            document.addEventListener('mouseup', () => { cursor.style.transform = 'scale(1)'; glow.style.transform = 'translate(-50%, -50%) scale(1)'; });
+            
+            function animate() { 
+                cursorX += (mouseX - cursorX) * 0.6; cursorY += (mouseY - cursorY) * 0.6; 
+                glowX += (mouseX - glowX) * 0.15; glowY += (mouseY - glowY) * 0.15; 
+                cursor.style.left = cursorX + 'px'; cursor.style.top = cursorY + 'px'; 
+                glow.style.left = glowX + 'px'; glow.style.top = glowY + 'px'; 
+                requestAnimationFrame(animate); 
+            }
+            animate();
+            
+            const links = document.querySelectorAll('a, button, .image-card, .primary-btn');
+            links.forEach(link => { 
+                link.addEventListener('mouseenter', () => { glow.style.transform = 'translate(-50%, -50%) scale(1.6)'; glow.style.background = 'radial-gradient(circle, rgba(167, 139, 250, 0.7) 0%, rgba(167, 139, 250, 0) 70%)'; }); 
+                link.addEventListener('mouseleave', () => { glow.style.transform = 'translate(-50%, -50%) scale(1)'; glow.style.background = 'radial-gradient(circle, var(--accent-glow) 0%, rgba(167, 139, 250, 0) 70%)'; }); 
+            });
+        }
     </script>
 </body>
 </html>
