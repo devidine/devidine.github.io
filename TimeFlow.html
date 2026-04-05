@@ -44,6 +44,33 @@
         .description-section { margin-bottom: 100px; text-align: center; }
         .description-section p { font-size: 1.3rem; color: var(--text-secondary); line-height: 1.8; max-width: 900px; margin: 0 auto 30px; }
 
+        .cta-container { text-align: center; margin-bottom: 100px; }
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 18px 45px;
+            background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+            box-shadow: 0 10px 25px rgba(167, 139, 250, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer !important;
+            
+        }
+        .primary-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(167, 139, 250, 0.5);
+            color: #ffffff;
+        }
+        .cta-container { margin-bottom: 60px; }
+        .primary-btn { padding: 15px 30px; font-size: 1.1rem; }
+
         .image-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 100px; }
         .image-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; overflow: hidden; transition: border-color 0.3s; }
         .image-card:hover { border-color: rgba(167, 139, 250, 0.5); }
